@@ -1,11 +1,23 @@
-import React from 'react';
-import { List, ContactItem, CardWrapper, ButtonDelete, Info } from './ContactList.styled';
+import React, { useEffect } from 'react';
+import {
+  List,
+  ContactItem,
+  CardWrapper,
+  ButtonDelete,
+  Info,
+} from './ContactList.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact } from '../../redux/contacts/phoneBookSlice';
-
+import {
+  deleteContact,
+  getContacts,
+} from '../../redux/contacts/phoneBookSlice';
 
 const ContactList = () => {
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getContacts());
+  }, [dispatch]);
 
   const contacts = useSelector(state => state.contactsStore.contacts);
   const filter = useSelector(state => state.filterStore);
@@ -18,9 +30,6 @@ const ContactList = () => {
   const handleDeleteContact = contactId => {
     dispatch(deleteContact(contactId));
   };
-
-
-
 
   return (
     <List>
@@ -40,5 +49,3 @@ const ContactList = () => {
 };
 
 export default ContactList;
-
-
