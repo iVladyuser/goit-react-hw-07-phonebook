@@ -1,60 +1,94 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, isAnyOf } from '@reduxjs/toolkit';
+import axios from 'axios';
 
-const initialContacts = [
-  { id: 1, name: 'Silvia Weber', number: '0076 397–70–42' },
-  { id: 2, name: 'Alberto Meier', number: '0079 202-75-94' },
-];
+const URL = 'https://655cdecb25b76d9884fe1656.mockapi.io/contacts';
 
-const initialState = {
-  contacts: JSON.parse(localStorage.getItem('contacts')) ?? initialContacts,
+export const getContacts = createAsyncThunk(
+  'contacts/fetchAll',
+  async (_, thunkApi) => {
+    try {
+      const response = await axios.get(URL);
+      return response.data;
+    } catch (err) {
+      return thunkApi.rejectWithValue(err.message);
+    }
+  }
+);
+
+export const deleteContact = createAsyncThunk(
+  'contacts/deleteContact',
+  async (contactId, thunkApi) => {
+    try {
+      const response = await axios.delete(`${URL}/${contactId}`);
+      return response.data;
+    } catch (err) {
+      return thunkApi.rejectWithValue(err.message);
+    }
+  }
+);
+
+export const addContact = createAsyncThunk(
+  'contacts/addContact',
+  async (newContact, thunkApi) => {
+    try {
+      const response = await axios.post(URL, newContact);
+      return response.data;
+    } catch (err) {
+      return thunkApi.rejectWithValue(err.message);
+    }
+  }
+);
+
+const contactInitialState = {
+  contacts: [],
+  isLoading: false,
+  error: null,
 };
 
 const phoneBookSlice = createSlice({
-  // Name of slice
   name: 'contacts',
-  // Initial state of reducer of slice
-  initialState,
-  // Object redusers
-  reducers: {
-    addContact(state, action) {
-      //   state.contacts = [...state.contacts, action.payload];
-      state.contacts.push(action.payload);
-    },
-    deleteContact(state, { payload }) {
-      state.contacts = state.contacts.filter(contact => contact.id !== payload);
-    },
-  },
+  initialState: contactInitialState,
+
+  extraReducers: builder =>
+    builder
+      .addCase(getContacts.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.contacts = payload;
+      })
+      .addCase(deleteContact.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.error = null;
+        state.contacts = state.contacts.filter(
+          contact => contact.id !== payload.id
+        );
+      })
+      .addCase(addContact.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.error = null;
+        state.contacts.push(payload);
+      })
+      .addMatcher(
+        isAnyOf(getContacts.pending, deleteContact.pending, addContact.pending),
+        state => {
+          state.isLoading = true;
+          state.error = null;
+        }
+      )
+      .addMatcher(
+        isAnyOf(
+          getContacts.rejected,
+          deleteContact.rejected,
+          addContact.rejected
+        ),
+        (state, { payload }) => {
+          state.isLoading = false;
+          state.error = payload;
+        }
+      ),
 });
 
-// To generate action-creators
-export const { addContact, deleteContact} = phoneBookSlice.actions;
-// Reducer of slice
 export const contactsReducer = phoneBookSlice.reducer;
 
-
-// REDUX
-
-// const initialState = {
-//   contacts: JSON.parse(localStorage.getItem('contacts')) ?? initialContacts,
-// };
-
-// export const contactsReducer = (state = initialState, action) => {
-//   switch (action.type) {
-//     case 'contacts/addContact': {
-//         return {
-//           ...state,
-//           contacts: [...state.contacts, action.payload], // ✅
-//         };
-//     }
-//     case 'contacts/deleteContact': {
-//       return {
-//         ...state,
-//         contacts: state.contacts.filter(
-//           contact => contact.id !== action.payload
-//         ),
-//       };
-//     }
-//     default:
-//       return state;
-//   }
-// };
+export const getPhoneBookValue = state => state.contactsStore.contacts;
+export const getIsLoading = state => state.contactsStore.isLoading;
+export const getError = state => state.contactsStore.error;
