@@ -88,7 +88,3 @@ const phoneBookSlice = createSlice({
 });
 
 export const contactsReducer = phoneBookSlice.reducer;
-
-export const getPhoneBookValue = state => state.contactsStore.contacts;
-export const getIsLoading = state => state.contactsStore.isLoading;
-export const getError = state => state.contactsStore.error;
