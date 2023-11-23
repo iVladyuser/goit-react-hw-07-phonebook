@@ -3,13 +3,14 @@ import { nanoid } from 'nanoid';
 import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from 'redux/contacts/phoneBookSlice';
 import { FormInput, Form, FormButton, FormLabel } from './ContactForm.styled';
+import { selectContacts } from 'redux/contacts/contactsSelectors';
 
 const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contactsStore.contacts);
+  const contacts = useSelector(selectContacts);
 
   const onSubmitAddContact = e => {
     e.preventDefault();

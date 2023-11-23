@@ -1,9 +1,9 @@
 import { useSelector } from 'react-redux';
-import { getError } from '../../redux/contacts/phoneBookSlice';
 import { WrapperError } from './Error.styled';
+import { selectContactsError } from 'redux/contacts/contactsSelectors';
 
 export const Error = () => {
-  const error = useSelector(getError);
+  const error = useSelector(selectContactsError);
 
   return (
     <WrapperError>
