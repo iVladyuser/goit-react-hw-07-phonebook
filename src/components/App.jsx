@@ -1,16 +1,17 @@
 import { ContactForm, ContactList, Filter } from 'components';
-import { Loader } from '../components/Loader/Loader';
-import { Error } from '../components/Error/Error';
+import { Loader } from 'components/Loader/Loader';
+import { Error } from 'components/Error/Error';
 import { useSelector } from 'react-redux';
-import {
-  selectContactsError,
-  selectContactsIsLoading,
-  selectContacts,
-} from '../redux/contacts/contactsSelectors';
+// import {
+//   selectContactsError,
+//   selectContactsIsLoading,
+//   selectContacts,
+// } from '../redux/contacts/contactsSelectors';
+import { contactsSelectors } from 'redux/contacts';
 const App = () => {
-  const isLoading = useSelector(selectContactsIsLoading);
-  const error = useSelector(selectContactsError);
-  const phoneBook = useSelector(selectContacts);
+  const isLoading = useSelector(contactsSelectors.selectContactsIsLoading);
+  const error = useSelector(contactsSelectors.selectContactsError);
+  const phoneBook = useSelector(contactsSelectors.selectContacts);
   return (
     <div
       style={{

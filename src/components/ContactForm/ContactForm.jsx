@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { nanoid } from 'nanoid';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'redux/contacts/phoneBookSlice';
 import { FormInput, Form, FormButton, FormLabel } from './ContactForm.styled';
-import { selectContacts } from 'redux/contacts/contactsSelectors';
+// import { addContact } from 'redux/contacts/phoneBookSlice';
+// import { selectContacts } from 'redux/contacts/contactsSelectors';
+import { contactsSelectors, contactsSlices } from 'redux/contacts';
 
 const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
   const dispatch = useDispatch();
-  const contacts = useSelector(selectContacts);
+  const contacts = useSelector(contactsSelectors.selectContacts);
 
   const onSubmitAddContact = e => {
     e.preventDefault();
@@ -29,7 +30,7 @@ const ContactForm = () => {
       return;
     }
 
-    dispatch(addContact(newContact));
+    dispatch(contactsSlices.addContact(newContact));
     setName('');
     setNumber('');
   };
