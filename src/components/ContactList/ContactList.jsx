@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import {
   List,
   ContactItem,
@@ -7,22 +7,23 @@ import {
   Info,
 } from './ContactList.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  deleteContact,
-  getContacts,
-} from '../../redux/contacts/phoneBookSlice';
-import { selectFilteredContacts } from 'redux/contacts/contactsSelectors';
+// import {
+//   deleteContact,
+//   getContacts,
+// } from '../../redux/contacts/phoneBookSlice';
+// import { selectFilteredContacts } from 'redux/contacts/contactsSelectors';
+import { contactsSelectors, contactsSlices } from 'redux/contacts';
 
 const ContactList = () => {
-  const visibleContacts = useSelector(selectFilteredContacts);
+  const visibleContacts = useSelector(contactsSelectors.selectFilteredContacts);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getContacts());
+    dispatch(contactsSlices.getContacts());
   }, [dispatch]);
 
   const handleDeleteContact = contactId => {
-    dispatch(deleteContact(contactId));
+    dispatch(contactsSlices.deleteContact(contactId));
   };
 
   return (
